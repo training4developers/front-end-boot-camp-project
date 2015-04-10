@@ -6,11 +6,45 @@ module.exports = function(grunt) {
 			wwwFolder: "app/www",
 			uploadsFolder: "app/uploads",
 			port: 8080
+		},
+		sass: {
+			dist: {
+				files: {
+					"app/www/css/site.css": "sass/site.scss"
+				}
+			}
+		},
+		cssmin: {
+			target: {
+				files: {
+					"app/www/css/site.min.css": ['app/www/css/*.css', '!app/www/css/*.min.css']
+				}
+			}
+		},
+		uglify: {
+			target: {
+				files: {
+					"app/www/js/site.min.js": ['app/www/js/*.js','!app/www/js/*.min.js']
+				}
+			}
+		},
+		watch: {
+			css: {
+				files: "sass/*.scss",
+				tasks: ["sass","cssmin"]
+			},
+			js: {
+				files: ["app/www/js/*.js", "!app/www/js/*.min.js"],
+				tasks: ["uglify"]
+			}
 		}
 
 	});
 
 	grunt.loadNpmTasks("grunt-contrib-sass");
+	grunt.loadNpmTasks("grunt-contrib-cssmin");
+	grunt.loadNpmTasks("grunt-contrib-uglify");
+	grunt.loadNpmTasks("grunt-contrib-watch");
 
 	grunt.registerTask("webserver", "start web server", function() {
 
@@ -27,11 +61,11 @@ module.exports = function(grunt) {
 				grunt.log.writeln("error: " + result.error);
 			});
 
-		this.async();
+		//this.async();
 
 	});
 
-	grunt.registerTask("default", ["webserver"]);
+	grunt.registerTask("default", ["webserver","watch"]);
 
 
 };
